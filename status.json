@@ -1,114 +1,30 @@
 {
-    "Rabu, 3 Juni 2026": {
+    "Rabu, 1 Juli 2026": {
         "status": "Kuota Penuh",
-        "hidden": 0
+        "hidden": 4
     },
-    "Kamis, 4 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 3
-    },
-    "Jum`at, 5 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 0
-    },
-    "Sabtu, 6 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": -27
-    },
-    "Minggu, 7 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": -4
-    },
-    "Senin, 8 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 1
-    },
-    "Selasa, 9 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 0
-    },
-    "Rabu, 10 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 1
-    },
-    "Kamis, 11 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 0
-    },
-    "Jum`at, 12 Juni 2026": {
+    "Kamis, 2 Juli 2026": {
         "status": "Kuota Penuh",
         "hidden": 2
     },
-    "Sabtu, 13 Juni 2026": {
+    "Jum`at, 3 Juli 2026": {
         "status": "Kuota Penuh",
-        "hidden": -203
+        "hidden": -8
     },
-    "Minggu, 14 Juni 2026": {
+    "Sabtu, 4 Juli 2026": {
         "status": "Kuota Penuh",
-        "hidden": 4
+        "hidden": -8
     },
-    "Senin, 15 Juni 2026": {
+    "Minggu, 5 Juli 2026": {
         "status": "Kuota Penuh",
-        "hidden": 0
+        "hidden": 2
     },
-    "Selasa, 16 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 0
-    },
-    "Rabu, 17 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 1
-    },
-    "Kamis, 18 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 0
-    },
-    "Jum`at, 19 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 0
-    },
-    "Sabtu, 20 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": -9
-    },
-    "Minggu, 21 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 5
-    },
-    "Senin, 22 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 5
-    },
-    "Selasa, 23 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 5
-    },
-    "Rabu, 24 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 4
-    },
-    "Kamis, 25 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 1
-    },
-    "Jum`at, 26 Juni 2026": {
+    "Senin, 6 Juli 2026": {
         "status": "Kuota Penuh",
         "hidden": 6
     },
-    "Sabtu, 27 Juni 2026": {
+    "Selasa, 7 Juli 2026": {
         "status": "Kuota Penuh",
-        "hidden": 5
-    },
-    "Minggu, 28 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": -9
-    },
-    "Senin, 29 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 0
-    },
-    "Selasa, 30 Juni 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 2
+        "hidden": 1
     }
 }
