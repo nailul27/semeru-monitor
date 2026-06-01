@@ -1,1 +1,43 @@
 
+name: Monitor Semeru
+
+on:
+
+  schedule:
+    - cron: '*/10 * * * *'
+
+  workflow_dispatch:
+
+jobs:
+
+  monitor:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Run Monitor
+        env:
+          FONNTE_TOKEN: ${{ secrets.FONNTE_TOKEN }}
+          WA_NUMBER: ${{ secrets.WA_NUMBER }}
+        run: php monitor.php
+
+      - name: Commit Status
+        run: |
+
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+          git add status.json
+
+          git commit -m "update status" || exit 0
+
+          git push
