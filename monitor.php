@@ -1,86 +1,70 @@
 <?php
 
 error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+date_default_timezone_set('UTC');
 
 $monitorMonth = getenv('MONITOR_MONTH') ?: '2026-07';
 
 echo "=====================================\n";
 echo "SEMERU MONITOR\n";
 echo "Month : {$monitorMonth}\n";
-echo "Time  : ".date('Y-m-d H:i:s')."\n";
+echo "Time  : ".date('Y-m-d H:i:s')." UTC\n";
 echo "=====================================\n";
 
-$url = 'https://bromotenggersemeru.id/website/home/get_view';
+$html = fetchSemeruData($monitorMonth);
 
-$postData = [
-    'action'     => 'kapasitas',
-    'id_site'    => '8',
-    'year_month' => $monitorMonth
-];
-
-$ch = curl_init();
-
-curl_setopt_array($ch, [
-    CURLOPT_URL            => $url,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_POST           => true,
-    CURLOPT_POSTFIELDS     => http_build_query($postData),
-    CURLOPT_TIMEOUT        => 30,
-    CURLOPT_HTTPHEADER     => [
-        'X-Requested-With: XMLHttpRequest'
-    ]
-]);
-
-$html = curl_exec($ch);
-
-if(curl_errno($ch)){
-
-    echo "CURL ERROR : ".curl_error($ch)."\n";
+if (!$html) {
+    echo "ERROR: gagal mengambil data TNBTS\n";
     exit(1);
-
-}
-
-curl_close($ch);
-
-if(empty($html)){
-
-    echo "Response kosong\n";
-    exit(1);
-
 }
 
 $current = parseQuotaTable($html);
 
 echo "Jumlah tanggal ditemukan : ".count($current)."\n";
 
+if (count($current) === 0) {
+    echo "ERROR: parser tidak menemukan data\n";
+    exit(1);
+}
+
+checkHeartbeat($current);
+
 $statusFile = __DIR__.'/status.json';
 
 $old = [];
 
-if(file_exists($statusFile)){
+if (file_exists($statusFile)) {
 
     $old = json_decode(
         file_get_contents($statusFile),
         true
     );
 
-    if(!is_array($old)){
+    if (!is_array($old)) {
         $old = [];
     }
-
 }
 
 echo "Data lama : ".count($old)."\n";
 
-$changedCount = 0;
+$openedCount = 0;
+$changeCount = 0;
 
-foreach($current as $tanggal => $data){
+foreach ($current as $tanggal => $data) {
 
-    if(!isset($old[$tanggal])){
+    if (!isset($old[$tanggal])) {
 
         echo "[NEW] {$tanggal}\n";
         continue;
+    }
 
+    if ($old[$tanggal] != $data) {
+
+        $changeCount++;
+
+        echo "[CHANGE] {$tanggal}\n";
     }
 
     $oldStatus = $old[$tanggal]['status'] ?? '';
@@ -93,17 +77,17 @@ foreach($current as $tanggal => $data){
         stripos($newStatus,'Kuota Penuh') !== false;
 
     /*
-    HANYA KIRIM WA
-    jika sebelumnya penuh
-    sekarang tidak penuh
-    */
+     * HANYA KIRIM WA
+     * JIKA STATUS BERUBAH
+     * DARI PENUH MENJADI TIDAK PENUH
+     */
 
-    if($oldFull && !$newFull){
+    if ($oldFull && !$newFull) {
 
         $message =
             "🚨 KUOTA SEMERU TERSEDIA\n\n".
-            "Tanggal : {$tanggal}\n\n".
-            "Status : {$newStatus}\n\n".
+            "Tanggal : {$tanggal}\n".
+            "Status  : {$newStatus}\n\n".
             "Segera cek:\n".
             "https://bromotenggersemeru.id";
 
@@ -111,20 +95,8 @@ foreach($current as $tanggal => $data){
 
         echo "[OPEN] {$tanggal}\n";
 
-        $changedCount++;
-
+        $openedCount++;
     }
-
-    /*
-    INFO DEBUG
-    */
-
-    if($old[$tanggal] != $data){
-
-        echo "[CHANGE] {$tanggal}\n";
-
-    }
-
 }
 
 file_put_contents(
@@ -136,14 +108,61 @@ file_put_contents(
     )
 );
 
-echo "Perubahan penting : {$changedCount}\n";
+echo "Perubahan data : {$changeCount}\n";
+echo "Kuota terbuka  : {$openedCount}\n";
 echo "status.json updated\n";
 
 exit(0);
 
-/* =====================================
+/* ===================================================
    FUNCTIONS
-===================================== */
+=================================================== */
+
+function fetchSemeruData($month)
+{
+    $url =
+        'https://bromotenggersemeru.id/website/home/get_view';
+
+    $postData = [
+
+        'action'     => 'kapasitas',
+        'id_site'    => '8',
+        'year_month' => $month
+
+    ];
+
+    $ch = curl_init();
+
+    curl_setopt_array($ch,[
+
+        CURLOPT_URL            => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => http_build_query($postData),
+        CURLOPT_TIMEOUT        => 30,
+
+        CURLOPT_HTTPHEADER => [
+            'X-Requested-With: XMLHttpRequest'
+        ]
+
+    ]);
+
+    $response = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+
+        echo "CURL ERROR : ".
+            curl_error($ch)."\n";
+
+        curl_close($ch);
+
+        return false;
+    }
+
+    curl_close($ch);
+
+    return $response;
+}
 
 function parseQuotaTable($html)
 {
@@ -161,11 +180,11 @@ function parseQuotaTable($html)
 
     $result = [];
 
-    foreach($rows as $row){
+    foreach ($rows as $row) {
 
         $tds = $row->getElementsByTagName('td');
 
-        if($tds->length < 2){
+        if ($tds->length < 2) {
             continue;
         }
 
@@ -189,23 +208,23 @@ function parseQuotaTable($html)
 
         $hidden = null;
 
-        $spans = $statusCell
-            ->getElementsByTagName('span');
+        $spans =
+            $statusCell->getElementsByTagName('span');
 
-        foreach($spans as $span){
+        foreach ($spans as $span) {
 
-            $class = $span->getAttribute('class');
+            $class =
+                $span->getAttribute('class');
 
-            if(
+            if (
                 strpos($class,'hide')
                 !== false
-            ){
+            ) {
 
                 $hidden =
                     (int)trim(
                         $span->textContent
                     );
-
             }
         }
 
@@ -216,34 +235,67 @@ function parseQuotaTable($html)
         );
 
         $result[$tanggal] = [
+
             'status' => trim($status),
             'hidden' => $hidden
-        ];
 
+        ];
     }
 
     return $result;
 }
 
+function checkHeartbeat($current)
+{
+    /*
+     * Trigger hanya untuk cron:
+     * 0 1 * * *
+     *
+     * (08:00 WIB)
+     */
+
+    $event = getenv('EVENT_NAME');
+
+    if ($event !== '0 1 * * *') {
+        return;
+    }
+
+    $message =
+        "📊 Monitor Semeru Aktif\n\n".
+        "Tanggal : ".date('Y-m-d')."\n".
+        "Jam UTC : ".date('H:i')."\n\n".
+        "Bulan Dipantau : ".
+        (getenv('MONITOR_MONTH') ?: '-') . "\n".
+        "Jumlah Tanggal : ".
+        count($current)."\n\n".
+        "Status : OK";
+
+    sendWA($message);
+
+    echo "HEARTBEAT SENT\n";
+}
+
 function sendWA($message)
 {
-    $token  = getenv('FONNTE_TOKEN');
-    $target = getenv('WA_NUMBER');
+    $token =
+        getenv('FONNTE_TOKEN');
 
-    if(
+    $target =
+        getenv('WA_NUMBER');
+
+    if (
         empty($token)
         ||
         empty($target)
-    ){
+    ) {
 
-        echo "FONNTE_TOKEN atau WA_NUMBER kosong\n";
+        echo "FONNTE_TOKEN / WA_NUMBER kosong\n";
         return;
-
     }
 
     $curl = curl_init();
 
-    curl_setopt_array($curl, [
+    curl_setopt_array($curl,[
 
         CURLOPT_URL =>
             'https://api.fonnte.com/send',
@@ -269,16 +321,14 @@ function sendWA($message)
 
     $response = curl_exec($curl);
 
-    if(curl_errno($curl)){
+    if (curl_errno($curl)) {
 
         echo "WA ERROR : ".
-            curl_error($curl).
-            "\n";
+            curl_error($curl)."\n";
 
-    }else{
+    } else {
 
         echo "WA SENT\n";
-
     }
 
     curl_close($curl);
