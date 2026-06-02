@@ -1,30 +1,23 @@
 {
     "Rabu, 1 Juli 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 4
+        "status": "Kuota Penuh "
     },
     "Kamis, 2 Juli 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 2
+        "status": "Kuota Penuh "
     },
     "Jum`at, 3 Juli 2026": {
-        "status": "Kuota Penuh",
-        "hidden": -8
+        "status": "Kuota Penuh "
     },
     "Sabtu, 4 Juli 2026": {
-        "status": "Kuota Penuh",
-        "hidden": -18
+        "status": "Kuota Penuh "
     },
     "Minggu, 5 Juli 2026": {
-        "status": "Kuota Penuh",
-        "hidden": -5
+        "status": "Kuota Penuh "
     },
     "Senin, 6 Juli 2026": {
-        "status": "Kuota Penuh",
-        "hidden": 6
+        "status": "Kuota Penuh "
     },
     "Selasa, 7 Juli 2026": {
-        "status": "Kuota Penuh",
-        "hidden": -16
+        "status": "Kuota Penuh "
     }
 }
