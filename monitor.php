@@ -256,7 +256,7 @@ function checkHeartbeat($current)
 
     $event = getenv('EVENT_NAME');
 
-    if ($event !== '0 1 * * *') {
+    if ($event !== '25 1 * * *') {
         return;
     }
 
